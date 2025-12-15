@@ -84,9 +84,6 @@ builder.Services.AddControllers()
 
 var app = builder.Build();
 
-// Configurar base de datos con más información
-await SetupDatabaseAsync(app);
-
 // Pipeline HTTP
 if (app.Environment.IsDevelopment())
 {
@@ -97,7 +94,8 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
-
+// base de datos
+await SetupDatabaseAsync(app);
 
 // Endpoints básicos
 app.MapGet("/health", async (AppDbContext dbContext) =>
@@ -280,7 +278,10 @@ async Task SetupDatabaseAsync(WebApplication app)
 {
     Console.WriteLine("\nSETTING UP DATABASE...");
 
-    using var scope = app.Services.CreateScope();
+    // Crear un scope MANUALMENTE
+    var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
+
+    using var scope = scopeFactory.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
     try

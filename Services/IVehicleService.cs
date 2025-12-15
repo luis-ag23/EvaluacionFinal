@@ -9,7 +9,10 @@ namespace ProyectoFinalTecWeb.Services
         Task<Vehicle> GetByIdAsync(Guid id);
         Task<Vehicle> UpdateAsync(UpdateVehicleDto dto, Guid id);
         Task DeleteAsync(Guid id);
-        Task<IEnumerable<Vehicle>> GetAll();
+        Task<IEnumerable<VehicleDto>> GetAll();
+        Task<IEnumerable<Vehicle>> GetAllV();
+
+
 
     }
 }

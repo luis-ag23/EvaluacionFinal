@@ -18,23 +18,49 @@ namespace ProyectoFinalTecWeb.Services
         }
         public async Task<Guid> CreateAsync(CreateVehicleDto dto)
         {
-            var entity = new Vehicle { ModelId = dto.ModelId, DriverId = dto.DriverId ,Plate = dto.Plate};
+            // Verificar que el Model existe
+            var model = await _models.GetByIdAsync(dto.ModelId);
+            if (model == null)
+                throw new Exception($"Model with ID {dto.ModelId} not found");
+
+            // Verificar que el Model no tenga ya un Vehicle (1:1)
+            var existingVehicle = await _vehicles.GetByIdAsync(dto.ModelId);
+            if (existingVehicle != null)
+                throw new Exception($"Model with ID {dto.ModelId} is already assigned to a vehicle");
+
+            // Crear el Vehicle
+            var entity = new Vehicle
+            {
+                ModelId = dto.ModelId,
+                Plate = dto.Plate
+            };
+
             await _vehicles.AddAsync(entity);
             await _vehicles.SaveChangesAsync();
+
+            // Actualizar la relación bidireccional
+            model.Vehicle = entity;
+            await _models.SaveChangesAsync();
 
             return entity.Id;
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            Vehicle? vehicle = (await GetAll()).FirstOrDefault(h => h.Id == id);
+            Vehicle? vehicle = (await GetAllV()).FirstOrDefault(h => h.Id == id);
             if (vehicle == null) return;
             await _vehicles.Delete(vehicle);
         }
+        public async Task<IEnumerable<Vehicle>> GetAllV()
+        {
+            return await _vehicles.GetAllV();
 
-        public async Task<IEnumerable<Vehicle>> GetAll()
+        }
+
+        public async Task<IEnumerable<VehicleDto>> GetAll()
         {
             return await _vehicles.GetAll();
+
         }
 
         public async Task<Vehicle> GetByIdAsync(Guid id)

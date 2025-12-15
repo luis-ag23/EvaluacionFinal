@@ -40,13 +40,18 @@ namespace ProyectoFinalTecWeb.Data
                 .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // Relación Driver - Vehículo (1:N)
+            // Relación Driver - Vehículo (M:N)
             modelBuilder.Entity<Driver>()
-                .HasMany(c => c.Vehicles)
-                .WithOne(v => v.Driver)
-                .HasForeignKey(v => v.DriverId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasMany(d=> d.Vehicles)
+                .WithMany(v => v.Drivers)
+                .UsingEntity<Dictionary<string, object>>(
+                    "DriverVehicle",
+                    j => j.HasOne<Vehicle>().WithMany().HasForeignKey("VehicleId"),
+                    j => j.HasOne<Driver>().WithMany().HasForeignKey("DriverId"),
+                    j =>{
+                        j.HasKey("DriverId", "VehicleId");
+                        j.ToTable("DriverVehicles");
+                    });
 
 
             // Relación  Vehículo - Model (1:1)
@@ -54,8 +59,12 @@ namespace ProyectoFinalTecWeb.Data
                 .HasOne(v => v.Model)
                 .WithOne(m => m.Vehicle)
                 .HasForeignKey<Vehicle>(v => v.ModelId)
-                .IsRequired() // vehículo debe tener SI O SI un modelo
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Hacer ModelId único para relación 1:1
+            modelBuilder.Entity<Vehicle>()
+                .HasIndex(v => v.ModelId)
+                .IsUnique();
         }
     }
 }

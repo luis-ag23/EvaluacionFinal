@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoFinalTecWeb.Entities;
 using ProyectoFinalTecWeb.Entities.Dtos.VehicleDto;
+using ProyectoFinalTecWeb.Repositories;
 using ProyectoFinalTecWeb.Services;
 
 namespace ProyectoFinalTecWeb.Controllers
@@ -11,10 +12,14 @@ namespace ProyectoFinalTecWeb.Controllers
     public class VehicleController : ControllerBase
     {
         private readonly IVehicleService _service;
+        private readonly IDriverService _drivers;
+        private readonly IVehicleRepository _vehicles;
 
-        public VehicleController(IVehicleService service)
+        public VehicleController(IVehicleService service, IDriverService drivers, IVehicleRepository vehicles)
         {
             _service = service;
+            _drivers = drivers;
+            _vehicles = vehicles;
         }
 
         // POST: api/vehicle
@@ -27,10 +32,9 @@ namespace ProyectoFinalTecWeb.Controllers
 
         // GET: api/vehicle
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetAllVehicles()
         {
-            IEnumerable<Vehicle> items = await _service.GetAll();
+            IEnumerable<VehicleDto> items = await _service.GetAll();
             return Ok(items);
         }
 
@@ -58,6 +62,45 @@ namespace ProyectoFinalTecWeb.Controllers
         {
             if (!ModelState.IsValid) return ValidationProblem(ModelState);
             await _service.DeleteAsync(id);
+            return NoContent();
+        }
+
+        // POST: api/vehicle/{vehicleId}/drivers/{driverId}
+        [HttpPost("{vehicleId:guid}/drivers/{driverId:guid}")]
+        public async Task<IActionResult> AssignDriver(Guid vehicleId, Guid driverId)
+        {
+            var vehicle = await _service.GetByIdAsync(vehicleId);
+            var driver = await _drivers.GetOne(driverId);
+
+            if (vehicle == null || driver == null)
+                return NotFound();
+
+            // Verifica si ya existe la relación
+            if (!vehicle.Drivers.Any(d => d.Id == driverId))
+            {
+                vehicle.Drivers.Add(driver);
+                await _vehicles.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
+
+        // DELETE: api/vehicle/{vehicleId}/drivers/{driverId}
+        [HttpDelete("{vehicleId:guid}/drivers/{driverId:guid}")]
+        public async Task<IActionResult> RemoveDriver(Guid vehicleId, Guid driverId)
+        {
+            var vehicle = await _service.GetByIdAsync(vehicleId);
+
+            if (vehicle == null)
+                return NotFound();
+
+            var driver = vehicle.Drivers.FirstOrDefault(d => d.Id == driverId);
+            if (driver != null)
+            {
+                vehicle.Drivers.Remove(driver);
+                await _vehicles.SaveChangesAsync();
+            }
+
             return NoContent();
         }
     }

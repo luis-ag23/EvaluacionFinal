@@ -1,4 +1,5 @@
 ﻿using ProyectoFinalTecWeb.Entities;
+using ProyectoFinalTecWeb.Entities.Dtos.VehicleDto;
 
 namespace ProyectoFinalTecWeb.Repositories
 {
@@ -8,7 +9,9 @@ namespace ProyectoFinalTecWeb.Repositories
         Task<Vehicle?> GetByIdAsync(Guid id);
         Task<bool> PlateExistsAsync(string plate);
         Task<int> SaveChangesAsync();
-        Task<IEnumerable<Vehicle>> GetAll();
+        Task<IEnumerable<VehicleDto>> GetAll();
+        Task<IEnumerable<Vehicle>> GetAllV();
+
         Task Update(Vehicle vehicle);
         Task Delete(Vehicle vehicle);
     }

@@ -7,8 +7,7 @@
         public string Plate { get; set; }
 
         // N:M vechicle -> driver
-        public Guid DriverId { get; set; }
-        public Driver Driver { get; set; } = default!;
+        public ICollection<Driver> Drivers { get; set; } = new List<Driver>();
 
         // 1:1 vehicle-> model
         public Guid ModelId { get; set; }

@@ -7,7 +7,6 @@
         public int Year { get; set; }
 
         // 1:1 Vehicle->Model
-        public Guid VehicleId { get; set; }
         public Vehicle Vehicle { get; set; } = default!;
     }
 }

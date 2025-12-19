@@ -56,5 +56,10 @@ namespace ProyectoFinalTecWeb.Controllers
             if (user == null) return NotFound(new {message = "email not exists"});
             return Ok(new ResponceForgotpasswordDto { token = DateTime.UtcNow.Minute.ToString()});
         }
+        [HttpPost("reset-password{guid:id}")]
+        public async Task<IActionResult> changePassword([FromBody] ResetpasswordDto dto)
+        {
+            var user = _service.changePassword(dto);
+        }
     }
 }

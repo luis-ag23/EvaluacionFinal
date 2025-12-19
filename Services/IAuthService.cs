@@ -12,5 +12,6 @@ namespace ProyectoFinalTecWeb.Services
         Task<(bool ok, LoginResponseDto? response)> RefreshAsync(RefreshRequestDto dto);
         Task<bool> getByEmailAdress(ForgotPasswordDto dto);
 
+        Task<bool> changePassword(ResetpasswordDto dto);
     }
 }

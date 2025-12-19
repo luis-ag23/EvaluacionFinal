@@ -54,7 +54,7 @@ namespace ProyectoFinalTecWeb.Controllers
         {
             var user = _service.getByEmailAdress(dto);
             if (user == null) return NotFound(new {message = "email not exists"});
-            return Ok(new ResponceForgotpasswordDto { token = DateTime.UtcNow.ToString()});
+            return Ok(new ResponceForgotpasswordDto { token = DateTime.UtcNow.Minute.ToString()});
         }
     }
 }

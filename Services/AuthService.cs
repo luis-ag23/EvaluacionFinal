@@ -275,5 +275,15 @@ namespace ProyectoFinalTecWeb.Services
             var bytes = RandomNumberGenerator.GetBytes(64);
             return Base64UrlEncoder.Encode(bytes);
         }
+
+        public async Task<bool> getByEmailAdress(ForgotPasswordDto dto)
+        {
+            var exists = _drivers.GetByEmailAddressAsync(dto.Email); 
+            if(exists == null)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

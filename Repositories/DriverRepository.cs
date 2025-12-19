@@ -34,8 +34,8 @@ namespace ProyectoFinalTecWeb.Repositories
                 .ToListAsync();
         }
 
-        public Task<Driver?> GetByEmailAddress(string email) =>
-            _ctx.Drivers.FirstOrDefaultAsync(u => u.Email == email);
+        public async Task<Driver?> GetByEmailAddress(string email) =>
+            await _ctx.Drivers.FirstOrDefaultAsync(u => u.Email == email);
 
         public Task<Driver?> GetByRefreshToken(string refreshToken)=>
             _ctx.Drivers.FirstOrDefaultAsync(d => d.RefreshToken == refreshToken);
@@ -78,6 +78,11 @@ namespace ProyectoFinalTecWeb.Repositories
         {
             _ctx.Drivers.Update(driver);
             await _ctx.SaveChangesAsync();
+        }
+
+        public async Task<Driver?> GetByEmailAddressAsync(string Email)
+        {
+            return await _ctx.Drivers.FirstOrDefaultAsync(d => d.Email == Email);
         }
     }
 }

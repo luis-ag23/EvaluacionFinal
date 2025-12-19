@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using ProyectoFinalTecWeb.Entities.Dtos.Auth;
 using ProyectoFinalTecWeb.Entities.Dtos.DriverDto;
 using ProyectoFinalTecWeb.Entities.Dtos.PassengerDto;
@@ -47,6 +48,13 @@ namespace ProyectoFinalTecWeb.Controllers
             var (ok, response) = await _service.RefreshAsync(dto);
             if (!ok || response is null) return Unauthorized();
             return Ok(response);
+        }
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> forgotpassword([FromBody] ForgotPasswordDto dto)
+        {
+            var user = _service.getByEmailAdress(dto);
+            if (user == null) return NotFound(new {message = "email not exists"});
+            return Ok(new ResponceForgotpasswordDto { token = DateTime.UtcNow.ToString()});
         }
     }
 }

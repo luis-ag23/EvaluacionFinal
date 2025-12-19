@@ -19,5 +19,7 @@ namespace ProyectoFinalTecWeb.Repositories
         Task<Driver?> GetOne(Guid id);
         Task Update(Driver driver);
         Task Delete(Driver driver);
+
+        Task<Driver?> GetByEmailAddressAsync(string Email);
     }
 }

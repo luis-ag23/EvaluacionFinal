@@ -10,6 +10,7 @@ namespace ProyectoFinalTecWeb.Services
         Task<string> RegisterDriverAsync(RegisterDriverDto dto);
         Task<string> RegisterPassengerAsync(RegisterPassengerDto dto);
         Task<(bool ok, LoginResponseDto? response)> RefreshAsync(RefreshRequestDto dto);
+        Task<bool> getByEmailAdress(ForgotPasswordDto dto);
 
     }
 }
